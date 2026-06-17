@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 
 class ConfigGui(QWidget):
 
-    def __init__(self, grab_thread, preview_thread, face_detector_thread):
+    def __init__(self, grab_thread, preview_thread):
         super().__init__()
 
         vbox = QVBoxLayout()
@@ -60,11 +60,11 @@ class ConfigGui(QWidget):
         self.prev_thread.started.connect(self.preview_thread.run)
         self.prev_thread.start()
 
-        self.face_detector_thread = face_detector_thread
-        self.face_thread = QThread()
-        self.face_detector_thread.moveToThread(self.face_thread)
-        self.face_thread.started.connect(self.face_detector_thread.run)
-        self.face_thread.start()
+        # self.face_detector_thread = face_detector_thread
+        # self.face_thread = QThread()
+        # self.face_detector_thread.moveToThread(self.face_thread)
+        # self.face_thread.started.connect(self.face_detector_thread.run)
+        # self.face_thread.start()
 
         self.show()
 
@@ -173,54 +173,25 @@ class ConfigGui(QWidget):
     def setup_camera_features(self):
         clearLayout(self.camera_feature_box)
 
-        if hasattr(self.camera, "BslLightSourcePreset"):
-            self.light_source_enum = EnumFeature(
-                self.camera.BslLightSourcePreset, "LightSource")
-            self.camera_feature_box.addLayout(
-                self.light_source_enum.get_layout())
+        features = [
+            ("BslLightSourcePreset", EnumFeature, "LightSource"),
+            ("AutoTargetBrightness", SliderFeature, "AutoBrightness"),
+            ("Gamma", SliderFeature, "Gamma"),
+            ("BslContrast", SliderFeature, "Contrast"),
+            ("BslBrightness", SliderFeature, "Brightness"),
+            ("BslSaturation", SliderFeature, "Saturation"),
+            ("BslHue", SliderFeature, "Hue"),
+            ("BslSharpnessEnhancement", SliderFeature, "Sharpness"),
+            ("BslNoiseReduction", SliderFeature, "NoiseReduction"),
+        ]
 
-        if hasattr(self.camera, "AutoTargetBrightness"):
-            self.auto_brightness_slider = SliderFeature(
-                self.camera.AutoTargetBrightness, "AutoBrightness")
-            self.camera_feature_box.addLayout(
-                self.auto_brightness_slider.get_layout())
-
-        if hasattr(self.camera, "Gamma"):
-            self.gamma_slider = SliderFeature(self.camera.Gamma, "Gamma")
-            self.camera_feature_box.addLayout(self.gamma_slider.get_layout())
-
-        if hasattr(self.camera, "BslContrast"):
-            self.contrast_slider = SliderFeature(
-                self.camera.BslContrast, "Contrast")
-            self.camera_feature_box.addLayout(
-                self.contrast_slider.get_layout())
-
-        if hasattr(self.camera, "BslBrightness"):
-            self.brightness_slider = SliderFeature(
-                self.camera.BslBrightness, "Brightness")
-            self.camera_feature_box.addLayout(
-                self.brightness_slider.get_layout())
-
-        if hasattr(self.camera, "BslSaturation"):
-            self.saturation_slider = SliderFeature(
-                self.camera.BslSaturation, "Saturation")
-            self.camera_feature_box.addLayout(
-                self.saturation_slider.get_layout())
-
-        if hasattr(self.camera, "BslHue"):
-            self.hue_slider = SliderFeature(self.camera.BslHue, "Hue")
-            self.camera_feature_box.addLayout(self.hue_slider.get_layout())
-
-        if hasattr(self.camera, "BslSharpnessEnhancement"):
-            self.sharpness_slider = SliderFeature(
-                self.camera.BslSharpnessEnhancement, "Sharpness")
-            self.camera_feature_box.addLayout(
-                self.sharpness_slider.get_layout())
-
-        if hasattr(self.camera, "BslNoiseReduction"):
-            self.noise_slider = SliderFeature(
-                self.camera.BslNoiseReduction, "NoiseReduction")
-            self.camera_feature_box.addLayout(self.noise_slider.get_layout())
+        for attr_name, feature_class, label in features:
+            try:
+                if hasattr(self.camera, attr_name):
+                    feature = feature_class(getattr(self.camera, attr_name), label)
+                    self.camera_feature_box.addLayout(feature.get_layout())
+            except Exception as e:
+                print(f"Skipped {attr_name}: {e}")
 
 
 def clearLayout(layout):

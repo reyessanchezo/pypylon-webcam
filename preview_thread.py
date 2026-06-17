@@ -3,7 +3,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import cv2
 import time
-from face_finder import draw_face_box
 import settings
 
 
@@ -17,7 +16,6 @@ class PreviewThread(QObject):
         super().__init__()
         self.running = True
         self.preview_enabled = False
-        self.face = None
 
     def stop(self):
         self.running = False
@@ -35,9 +33,6 @@ class PreviewThread(QObject):
     def send_frame(self, frame):
         self.frame = frame
 
-    def send_face(self, face):
-        self.face = face
-
     def run(self):
         while self.running:
             if self.preview_enabled:
@@ -45,10 +40,7 @@ class PreviewThread(QObject):
                     self.preview_toggle.emit()
                     self.preview_enabled = False
                 else:
-                    if not self.face is None:
-                        draw_face_box(self.frame, self.face)
-                    cv2.imshow(self.window_name, self.frame)
                     cv2.waitKey(30)
             else:
                 cv2.destroyWindow(self.window_name)
-                time.sleep(0.03)
+                time.sleep(0.02)

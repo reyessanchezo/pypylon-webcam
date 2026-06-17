@@ -3,5 +3,6 @@
     "python.linting.flake8Enabled": false,
     "python.linting.enabled": true,
     "python.pythonPath": "C:\\Users\\fdlugi\\AppData\\Local\\Continuum\\anaconda3\\envs\\pypylon-webcam\\python.exe",
-    "python.linting.banditEnabled": true
+    "python.linting.banditEnabled": true,
+    "python-envs.defaultEnvManager": "ms-python.python:venv"
 }
