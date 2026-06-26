@@ -1,8 +1,12 @@
 {
-    "color" : false,
-    "input_resolution" : [1920, 1200],
-    "output_resolution" : [1920, 1200],
-    "preview_resolution" : [1920, 1200],
-    "fps" : 30,
-    "max_exposure_time" : 100
+    "color": false,
+    "input_resolution": [1920, 1080],
+    "output_resolution": [1920, 1080],
+    "preview_resolution": [854, 480],
+    "fps": 30,
+    "max_exposure_time": 50,
+    "max_buffer_frames": 0,
+    "color_mode": false,
+    "aspect_mode": "letterbox"
 }
+

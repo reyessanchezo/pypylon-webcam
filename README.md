@@ -1,6 +1,22 @@
 # Pylon-Webcam
-This Project provides a user interface for connecting a Basler daA1920-160uc camera to the virtualcam interface of OBS. Through this it enables the use of this camera as a webcam.
 
-# Requirements
-1. Install OBS
-2. Install python with requirements.txt
+[![Forked from](https://img.shields.io/badge/Forked%20From-FredericDlugi--pypylon--webcam-blue)](https://github.com/FredericDlugi/pypylon-webcam)
+
+This project is originally forked from [FredericDlugi/PyPylon-Webcam](https://github.com/FredericDlugi/pypylon-webcam) and focuses on outputting an OBS Virtual Camera.
+
+## Description
+
+This tool provides a user interface for connecting Basler cameras to the virtualcam interface of OBS, enabling you to use these cameras as webcams. It now supports other Basler cameras beyond just the original daA1920-160uc model.
+
+## Requirements
+
+1. Install [OBS](https://obsproject.com/)
+2. Install Python with dependencies from `requirements.txt`
+
+## Setup
+
+After installing the requirements, run the application to configure your camera settings and start streaming via OBS Virtual Camera.
+
+## License
+
+This project is forked from FredericDlugi/pypylon-webcam and uses its original licensing terms.

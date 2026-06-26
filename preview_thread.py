@@ -2,11 +2,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import cv2
-import time
 import settings
 
 
 class PreviewThread(QObject):
+
 
     preview_toggle = pyqtSignal()
     window_name = "Preview"
@@ -35,12 +35,14 @@ class PreviewThread(QObject):
 
     def run(self):
         while self.running:
-            if self.preview_enabled:
+            if self.preview_enabled and hasattr(self, 'frame'):
+                # Display the stored frame in the preview window
+                cv2.imshow(self.window_name, self.frame)
                 if cv2.getWindowProperty(self.window_name, cv2.WND_PROP_VISIBLE) < 1:
                     self.preview_toggle.emit()
                     self.preview_enabled = False
                 else:
-                    cv2.waitKey(30)
+                    # Reduced wait from 30ms to 5ms for lower latency preview
+                    cv2.waitKey(5)
             else:
                 cv2.destroyWindow(self.window_name)
-                time.sleep(0.02)

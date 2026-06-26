@@ -17,8 +17,7 @@ class ConfigGui(QWidget):
         self.discover_button.clicked.connect(self.discover_cameras)
         self.connect_button = QPushButton("Open")
         self.connect_button.clicked.connect(self.connect_camera)
-        self.discover_cameras()
-
+        
         discover_box = QHBoxLayout()
         discover_box.addWidget(self.camera_list)
         discover_box.addWidget(self.discover_button)
@@ -32,8 +31,11 @@ class ConfigGui(QWidget):
 
         self.footer_box = QHBoxLayout()
         vbox.addLayout(self.footer_box)
-        self.avg_fps_label = QLabel("FPS:  0.00")
+        self.avg_fps_label = QLabel("FPS:   0.00 | Latency: --- ms")
         self.footer_box.addWidget(self.avg_fps_label)
+        self.footer_box.addStretch()
+        self.latency_label = QLabel("Latency: --- ms")
+        self.footer_box.addWidget(self.latency_label)
         self.footer_box.addStretch()
         self.preview_enabled = False
         self.preview_toggle = QPushButton("Show Preview")
@@ -41,7 +43,7 @@ class ConfigGui(QWidget):
         self.preview_toggle.clicked.connect(self.on_preview_toggle)
         self.footer_box.addWidget(self.preview_toggle)
         self.setLayout(vbox)
-        self.setGeometry(50, 50, 320, 200)
+        self.setGeometry(100, 100, 420, 320)
         self.setWindowTitle("Pylon Webcam")
 
         self.setup_minimize_to_tray()
@@ -52,6 +54,7 @@ class ConfigGui(QWidget):
         self.thread.started.connect(self.grab_thread.run)
         self.grab_thread.finished.connect(self.grab_thread_finished)
         self.grab_thread.avg_fps.connect(self.update_avg_fps)
+        self.grab_thread.latency_ms.connect(self.update_latency)
 
         self.preview_thread = preview_thread
         self.prev_thread = QThread()
@@ -60,11 +63,8 @@ class ConfigGui(QWidget):
         self.prev_thread.started.connect(self.preview_thread.run)
         self.prev_thread.start()
 
-        # self.face_detector_thread = face_detector_thread
-        # self.face_thread = QThread()
-        # self.face_detector_thread.moveToThread(self.face_thread)
-        # self.face_thread.started.connect(self.face_detector_thread.run)
-        # self.face_thread.start()
+        self.discover_cameras()
+        #self.connect_camera()
 
         self.show()
 
@@ -73,8 +73,8 @@ class ConfigGui(QWidget):
         self.tray_icon.setIcon(QIcon('pylon_webcam_icon_64.png'))
 
         show_action = QAction("Show", self)
-        quit_action = QAction("Exit", self)
-        hide_action = QAction("Hide", self)
+        quit_action = QAction("Exit")
+        hide_action = QAction("Hide")
         show_action.triggered.connect(self.show)
         hide_action.triggered.connect(self.hide)
         quit_action.triggered.connect(qApp.quit)
@@ -124,8 +124,14 @@ class ConfigGui(QWidget):
         clearLayout(self.camera_feature_box)
         self.discover_cameras()
 
+
     def update_avg_fps(self, value):
-        self.avg_fps_label.setText("FPS: {:2.2f}".format(value))
+        self.avg_fps_label.setText(f"FPS:   {value:.2f}")
+
+    def update_latency(self, latency_ms):
+        # Update latency with 2 decimal places and pad to align with FPS display
+        latency_str = f"{latency_ms:.2f}"
+        self.latency_label.setText(f"Latency: {latency_str} ms")
 
     def discover_cameras(self):
         self.full_name_list = []
@@ -174,16 +180,10 @@ class ConfigGui(QWidget):
         clearLayout(self.camera_feature_box)
 
         features = [
-            ("BslLightSourcePreset", EnumFeature, "LightSource"),
-            ("AutoTargetBrightness", SliderFeature, "AutoBrightness"),
             ("Gamma", SliderFeature, "Gamma"),
             ("BslContrast", SliderFeature, "Contrast"),
             ("BslBrightness", SliderFeature, "Brightness"),
-            ("BslSaturation", SliderFeature, "Saturation"),
-            ("BslHue", SliderFeature, "Hue"),
-            ("BslSharpnessEnhancement", SliderFeature, "Sharpness"),
-            ("BslNoiseReduction", SliderFeature, "NoiseReduction"),
-        ]
+            ]
 
         for attr_name, feature_class, label in features:
             try:
