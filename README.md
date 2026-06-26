@@ -1,7 +1,5 @@
 # Pylon-Webcam
 
-[![Forked from](https://img.shields.io/badge/Forked%20From-FredericDlugi--pypylon--webcam-blue)](https://github.com/FredericDlugi/pypylon-webcam)
-
 This project is originally forked from [FredericDlugi/PyPylon-Webcam](https://github.com/FredericDlugi/pypylon-webcam) and focuses on outputting an OBS Virtual Camera.
 
 ## Description
